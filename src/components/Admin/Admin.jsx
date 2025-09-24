@@ -13,8 +13,8 @@ function Admin() {
   // Fetch users & coupons
   const fetchData = async () => {
     const [usersRes, couponsRes] = await Promise.all([
-      axios.get("http://localhost:8000/api/users"),
-      axios.get("http://localhost:8000/api/coupons")
+      axios.get("https://guest-taazadandiya-admin.onrender.com/api/users"),
+      axios.get("https://guest-taazadandiya-admin.onrender.com/api/coupons")
     ]);
     setUsers(usersRes.data);
     setCoupons(couponsRes.data);
