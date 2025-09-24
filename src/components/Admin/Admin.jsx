@@ -13,8 +13,8 @@ function Admin() {
   // Fetch users & coupons
   const fetchData = async () => {
     const [usersRes, couponsRes] = await Promise.all([
-      axios.get("https://guest-taazadandiya-admin.onrender.com/api/users"),
-      axios.get("https://guest-taazadandiya-admin.onrender.com/api/coupons")
+      axios.get("https://guestdandiya-backend.onrender.com/api/users"),
+      axios.get("https://guestdandiya-backend.onrender.com/api/coupons"),
     ]);
     setUsers(usersRes.data);
     setCoupons(couponsRes.data);
@@ -25,17 +25,17 @@ function Admin() {
   }, []);
 
   // Map automatic reference from coupon DB
-  const usersWithReferences = users.map(u => {
-    const coupon = coupons.find(c => c.Coupons === u.coupon);
+  const usersWithReferences = users.map((u) => {
+    const coupon = coupons.find((c) => c.Coupons === u.coupon);
     return {
       ...u,
-      couponReference: coupon?.Reference || "-"
+      couponReference: coupon?.Reference || "-",
     };
   });
 
   // SORT + FILTER USERS
   const sortedUsers = [...usersWithReferences]
-    .filter(u => u.name.toLowerCase().includes(userFilter.toLowerCase()))
+    .filter((u) => u.name.toLowerCase().includes(userFilter.toLowerCase()))
     .sort((a, b) =>
       userSortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
     );
@@ -45,7 +45,10 @@ function Admin() {
     const worksheet = XLSX.utils.json_to_sheet(data);
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, fileName);
-    const excelBuffer = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+    const excelBuffer = XLSX.write(workbook, {
+      bookType: "xlsx",
+      type: "array",
+    });
     const blob = new Blob([excelBuffer], { type: "application/octet-stream" });
     saveAs(blob, `${fileName}.xlsx`);
   };
@@ -61,7 +64,7 @@ function Admin() {
           type="text"
           placeholder="Filter by name..."
           value={userFilter}
-          onChange={e => setUserFilter(e.target.value)}
+          onChange={(e) => setUserFilter(e.target.value)}
           className="filter-input"
         />
         <button onClick={() => setUserSortAsc(!userSortAsc)}>
@@ -84,12 +87,12 @@ function Admin() {
               <th>Coupon</th>
               <th>Token</th>
               <th>Coupon Reference</th> {/* Automatic */}
-              <th>User Reference</th>   {/* User filled */}
+              <th>User Reference</th> {/* User filled */}
               <th>Event Date</th>
             </tr>
           </thead>
           <tbody>
-            {sortedUsers.map(u => (
+            {sortedUsers.map((u) => (
               <tr key={u._id}>
                 <td>{u.createdAt?.substring(0, 10)}</td>
                 <td>{u.name}</td>
