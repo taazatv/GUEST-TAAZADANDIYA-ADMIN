@@ -7,7 +7,7 @@ import "./Admin.css";
 function Admin() {
   const [users, setUsers] = useState([]);
   const [coupons, setCoupons] = useState([]);
-  const [userFilter, setUserFilter] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
   const [userSortAsc, setUserSortAsc] = useState(true);
 
   // Fetch users & coupons
@@ -35,10 +35,23 @@ function Admin() {
 
   // SORT + FILTER USERS
   const sortedUsers = [...usersWithReferences]
-    .filter((u) => u.name.toLowerCase().includes(userFilter.toLowerCase()))
-    .sort((a, b) =>
-      userSortAsc ? a.name.localeCompare(b.name) : b.name.localeCompare(a.name)
-    );
+    .filter(
+      (u) =>
+        u.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        u.coupon.toLowerCase().includes(searchQuery.toLowerCase())
+    )
+    .sort((a, b) => {
+      // Sort by createdAt (latest first)
+      const dateA = new Date(a.createdAt);
+      const dateB = new Date(b.createdAt);
+      if (dateA > dateB) return -1;
+      if (dateA < dateB) return 1;
+
+      // If same date → then sort alphabetically
+      return userSortAsc
+        ? a.name.localeCompare(b.name)
+        : b.name.localeCompare(a.name);
+    });
 
   // DOWNLOAD EXCEL FUNCTION
   const downloadExcel = (data, fileName) => {
@@ -62,9 +75,9 @@ function Admin() {
       <div className="top-controls">
         <input
           type="text"
-          placeholder="Filter by name..."
-          value={userFilter}
-          onChange={(e) => setUserFilter(e.target.value)}
+          placeholder="Search by name or coupon..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className="filter-input"
         />
         <button onClick={() => setUserSortAsc(!userSortAsc)}>
